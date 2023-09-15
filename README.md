@@ -1,10 +1,10 @@
-# 1 Start project
+# 2 Start project
 require:
 * docker
 * composer
 * symfony cli
 
-## 1.1. Symfony
+## 2.1. Symfony
 Создание локальных переменных:
 `symfony var:export --multiline > .env.local`
 
@@ -23,14 +23,14 @@ require:
 Запустить сервер:
 `symfony serve`
 
-## 1.2. analyze your code
+## 2.2. analyze your code
 `vendor/bin/phpstan analyse src`
 
-## 1.3. linter
+## 2.3. linter
 `./vendor/bin/php-cs-fixer fix`
 
-# 2 Create first service
-## 2.1. Создание тестовых данных в БД
+# 3 Create first service
+## 3.1. Создание тестовых данных в БД
 Установка зависимостей: `composer require --dev orm-fixtures`
 
 Исользуем fixtures:
@@ -39,7 +39,7 @@ require:
 * `# BookCategoryFixtures`
 * `./bin/console doctrine:fixtures:load --purge-with-truncate` - перед загрузкой делаем truncate
 
-## 2.2. UNIT Тестирование
+## 3.2. UNIT Тестирование
 Докментация: `https://docs.phpunit.de/en/10.3/`
 
 Настройка(**временно, так делать нельзя**):
@@ -51,7 +51,7 @@ require:
 * `composer require --dev phpunit/phpunit` - бибилиотека
 * `composer require --dev symfony/test-pack` - хелперы symfony
 
-## 2.3. Swagger
+## 3.3. Swagger
 Документация приложения доступна по `${host}:${port}/api/doc`
 
 Зависимости:
@@ -62,5 +62,33 @@ require:
 * `composer require twig`
 * `composer require asset`
 
-# 3. Receiving books by category
+# 4. Receiving books by category
 Добавлены UNIT и FUNC тесты, добавлен контроллер и сервис.
+
+# 5. More tests
+Требуемые зависимости:
+
+**Doctrine test bundle** - Этот пакет предоставляет функции, которые помогут вам
+более эффективно запускать набор тестов вашего приложения на основе Symfony
+с помощью изолированных тестов.
+
+https://github.com/dmaicher/doctrine-test-bundle
+
+`composer require --dev dama/doctrine-test-bundle`
+
+Также требуется добавить extension в файл конфигурации PHPUnit:
+```xml
+<extensions>
+    <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+</extensions>
+```
+
+Еще одна зависимость:
+
+**phpunit-json-assert** - Эта библиотека добавляет в PHPUnit несколько новых утверждений, которые
+позволяют легко и лаконично проверять сложные структуры данных (часто, но не
+обязательно, документы JSON) с использованием выражений JSONPath и схем JSON.
+
+https://packagist.org/packages/helmich/phpunit-json-assert
+
+`composer require --dev helmich/phpunit-json-assert`

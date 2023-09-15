@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Exception\BookCategoryNotFoundException;
 use App\model\BookListResponse;
 use App\Service\BookService;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ class BookController extends AbstractController
      * @OA\Response(
      *     response=200,
      *     description="Returns books inside a category",
+     *
      *     @Model(type=BookListResponse::class)
      * )
      */
