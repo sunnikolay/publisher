@@ -61,3 +61,6 @@ require:
 * `composer require -W nelmio/api-doc-bundle`
 * `composer require twig`
 * `composer require asset`
+
+# 3. Receiving books by category
+Добавлены UNIT и FUNC тесты, добавлен контроллер и сервис.
