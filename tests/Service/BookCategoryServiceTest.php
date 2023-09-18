@@ -7,19 +7,22 @@ use App\model\BookCategoryList;
 use App\model\BookCategoryListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Service\BookCategoryService;
-use Doctrine\Common\Collections\Criteria;
+use App\Tests\TestUtility;
 use PHPUnit\Framework\TestCase;
 
 class BookCategoryServiceTest extends TestCase
 {
+    use TestUtility;
 
     public function testGetCategories(): void
     {
+        $obj = (new BookCategory())->setTitle('Test')->setSlug('test');
+        $this->setField($obj, 2);
+
         $repo = $this->createMock(BookCategoryRepository::class);
         $repo->expects($this->once())
-            ->method('findBy')
-            ->with([], ['title' => Criteria::ASC])
-            ->willReturn([(new BookCategory())->setId(2)->setTitle('Test')->setSlug('test')]);
+            ->method('findAllSortedByTitle')
+            ->willReturn([$obj]);
 
         $service = new BookCategoryService($repo);
         $expected = new BookCategoryListResponse([new BookCategoryList(2, 'Test', 'test')]);

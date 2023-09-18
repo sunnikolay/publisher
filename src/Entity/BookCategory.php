@@ -24,12 +24,6 @@ class BookCategory
         return $this->id;
     }
 
-    public function setId(int $id): BookCategory
-    {
-        $this->id = $id;
-        return $this;
-    }
-
     public function getTitle(): string
     {
         return $this->title;
