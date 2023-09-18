@@ -26,9 +26,9 @@ class BookServiceTest extends TestCase
         $bookRepo = $this->createMock(BookRepository::class);
         $bookCategoryRepo = $this->createMock(BookCategoryRepository::class);
         $bookCategoryRepo->expects($this->once())
-            ->method('find')
+            ->method('existsById')
             ->with(130)
-            ->willThrowException(new BookCategoryNotFoundException());
+            ->willReturn(false);
 
         $this->expectException(BookCategoryNotFoundException::class);
 
@@ -48,9 +48,9 @@ class BookServiceTest extends TestCase
 
         $bookCategoryRepo = $this->createMock(BookCategoryRepository::class);
         $bookCategoryRepo->expects($this->once())
-            ->method('find')
+            ->method('existsById')
             ->with(130)
-            ->willReturn(new BookCategory());
+            ->willReturn(true);
 
         $service = new BookService($bookCategoryRepo, $bookRepo);
         $expected = new BookListResponse([$this->createBookItemsEntity()]);
