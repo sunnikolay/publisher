@@ -92,3 +92,41 @@ https://github.com/dmaicher/doctrine-test-bundle
 https://packagist.org/packages/helmich/phpunit-json-assert
 
 `composer require --dev helmich/phpunit-json-assert`
+
+# 6 Processing exception
+
+# 7 Test exception
+7.1. Установка monolog
+
+`composer require symfony/monolog-bundle`
+
+7.2. Настройка monolog для dev (файл **config.packages.monolog.yaml**):
+```yaml
+when@dev:
+    monolog:
+        handlers:
+            main:
+                type: stream
+                path: "php://stderr"
+                level: debug
+                channels: ["!event"]
+```
+
+7.3. Отключить ошибку о favicon.ico
+
+```phpt
+php -r "copy('https://symfony.com/favicon.ico', 'public/favicon.ico');"
+```
+
+7.4. Добавить параметр в контекст(autowired)
+
+Объявляем перенную **$isDebug** в файле **config/service.yaml**, эта переменная
+будет доступна в через **autowired**:
+```yaml
+services:
+    _defaults:
+        bind:
+            bool $isDebug: '%kernel.debug%'
+```
+Режим дебага отключается в **prod** профиле. Для того что бы указать **prod**
+режим надо добавить строку "**export APP_ENV=prod**" в файл **env.local**
