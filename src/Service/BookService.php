@@ -4,8 +4,8 @@ namespace App\Service;
 
 use App\Entity\Book;
 use App\Exception\BookCategoryNotFoundException;
-use App\model\BookListItem;
-use App\model\BookListResponse;
+use App\Model\BookListItem;
+use App\Model\BookListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Repository\BookRepository;
 

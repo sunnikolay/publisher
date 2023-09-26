@@ -5,7 +5,6 @@ namespace App\utility\ArgumentResolver;
 use App\Exception\RequestBodyConvertException;
 use App\Exception\ValidationException;
 use App\utility\Attribute\RequestBody;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -17,8 +16,7 @@ class RequestBodyArgumentResolver implements ArgumentValueResolverInterface
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
-        private readonly ValidatorInterface $validator,
-        private readonly LoggerInterface $logger
+        private readonly ValidatorInterface $validator
     ) {
     }
 

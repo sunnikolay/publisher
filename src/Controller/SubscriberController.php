@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\model\ErrorResponse;
-use App\model\SubscriberRequest;
+use App\Model\ErrorResponse;
+use App\Model\SubscriberRequest;
 use App\Service\SubscriberService;
 use App\utility\Attribute\RequestBody;
 use Nelmio\ApiDocBundle\Annotation\Model;

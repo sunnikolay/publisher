@@ -1,16 +1,16 @@
 <?php
 
-namespace App\model;
+namespace App\Model;
 
-class BookListResponse
+class BookCategoryListResponse
 {
     /**
-     * @var BookListItem[]
+     * @var BookCategoryList[]
      */
     private array $items;
 
     /**
-     * @param BookListItem[] $items
+     * @param BookCategoryList[] $items
      */
     public function __construct(array $items)
     {
@@ -18,7 +18,7 @@ class BookListResponse
     }
 
     /**
-     * @return BookListItem[]
+     * @return BookCategoryList[]
      */
     public function getItems(): array
     {

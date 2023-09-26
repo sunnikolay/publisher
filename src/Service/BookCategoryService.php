@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Entity\BookCategory;
-use App\model\BookCategoryList;
-use App\model\BookCategoryListResponse;
+use App\Model\BookCategoryList;
+use App\Model\BookCategoryListResponse;
 use App\Repository\BookCategoryRepository;
 
 class BookCategoryService
