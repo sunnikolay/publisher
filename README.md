@@ -4,12 +4,66 @@ require:
 * composer
 * symfony cli
 
+## 2.1. Установка зависимости для работы с базой данных.
+
+```
+# composer require symfony/orm-pack
+
+ doctrine/doctrine-bundle  instructions:
+
+  * Modify your DATABASE_URL config in .env
+
+  * Configure the driver (postgresql) and
+    server_version (15) in config/packages/doctrine.yaml
+
+```
+Требуется создать файл **docker-compose** в нем прописать:
+```yaml
+version: "3.9"
+
+services:
+  database:
+    container_name: postgres
+    image: postgres:13.3-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+```
+Для использования атрибутов требуется изменить конфигурацию **doctrine**. В
+файле конфигурации **config/packages/doctrine.yaml** добавить свойство:
+```yaml
+doctrine.orm.mappings.App.type: attribute
+```
+
+## 2.2. Maker bundle
+
+**Symfony Maker** помогает вам создавать пустые команды, контроллеры, классы
+форм, тесты и многое другое, так что вы можете забыть о написании шаблонного
+кода. Этот пакет является альтернативой **SensioGeneratorBundle** для
+современных приложений **Symfony** и требует использования **Symfony 3.4**
+или новее. Этот пакет предполагает, что вы используете стандартную структуру
+каталогов **Symfony 4**, но многие команды могут генерировать код в любом
+приложении.
+```
+composer require --dev symfony/maker-bundle
+```
+Использование:
+```
+./bin/console list make
+
+./bin/console make:entity
+```
+
+Документация https://symfony.com/bundles/SymfonyMakerBundle/current/index.html
+
 ## 2.1. Symfony
 Создание локальных переменных:
-`symfony var:export --multiline > .env.local`
-
-Создание сущностей:
-`./bin/console make:entity`
+```
+symfony var:export --multiline > .env.local
+```
 
 Создание миграции:
 * `./bin/console make:migration`
@@ -28,6 +82,8 @@ require:
 
 ## 2.3. linter
 `./vendor/bin/php-cs-fixer fix`
+
+---
 
 # 3 Create first service
 ## 3.1. Создание тестовых данных в БД
@@ -130,3 +186,8 @@ services:
 ```
 Режим дебага отключается в **prod** профиле. Для того что бы указать **prod**
 режим надо добавить строку "**export APP_ENV=prod**" в файл **env.local**
+
+# 8 Subscribe
+Установка валидатора:
+
+`composer require symfony/validator`

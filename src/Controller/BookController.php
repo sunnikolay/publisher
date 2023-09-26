@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\model\BookListResponse;
+use App\Model\BookListResponse;
 use App\Model\ErrorResponse;
 use App\Service\BookService;
 use Nelmio\ApiDocBundle\Annotation\Model;
