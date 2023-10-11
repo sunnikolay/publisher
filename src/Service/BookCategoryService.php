@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\BookCategory;
-use App\Model\BookCategoryList;
+use App\Model\BookCategory as BookCategoryModel;
 use App\Model\BookCategoryListResponse;
 use App\Repository\BookCategoryRepository;
 
@@ -17,7 +17,7 @@ class BookCategoryService
     {
         $categories = $this->repository->findAllSortedByTitle();
         $items = array_map(
-            fn (BookCategory $bc) => new BookCategoryList($bc->getId(), $bc->getTitle(), $bc->getSlug()),
+            fn (BookCategory $bc) => new BookCategoryModel($bc->getId(), $bc->getTitle(), $bc->getSlug()),
             $categories
         );
 

@@ -5,12 +5,12 @@ namespace App\Model;
 class BookCategoryListResponse
 {
     /**
-     * @var BookCategoryList[]
+     * @var BookCategory[]
      */
     private array $items;
 
     /**
-     * @param BookCategoryList[] $items
+     * @param BookCategory[] $items
      */
     public function __construct(array $items)
     {
@@ -18,7 +18,7 @@ class BookCategoryListResponse
     }
 
     /**
-     * @return BookCategoryList[]
+     * @return BookCategory[]
      */
     public function getItems(): array
     {

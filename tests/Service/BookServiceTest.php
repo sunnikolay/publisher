@@ -9,6 +9,7 @@ use App\Model\BookListItem;
 use App\Model\BookListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Repository\BookRepository;
+use App\Repository\ReviewRepository;
 use App\Service\BookService;
 use App\Tests\TestUtility;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,6 +24,7 @@ class BookServiceTest extends TestCase
      */
     public function testGetBooksByCategoryNotFound(): void
     {
+        $reviewRepo = $this->createMock(ReviewRepository::class);
         $bookRepo = $this->createMock(BookRepository::class);
         $bookCategoryRepo = $this->createMock(BookCategoryRepository::class);
         $bookCategoryRepo->expects($this->once())
@@ -32,7 +34,7 @@ class BookServiceTest extends TestCase
 
         $this->expectException(BookCategoryNotFoundException::class);
 
-        (new BookService($bookCategoryRepo, $bookRepo))->getBookByCategory(130);
+        (new BookService($bookCategoryRepo, $bookRepo, $reviewRepo))->getBookByCategory(130);
     }
 
     /**
@@ -40,6 +42,7 @@ class BookServiceTest extends TestCase
      */
     public function testGetBooksByCategory(): void
     {
+        $reviewRepo = $this->createMock(ReviewRepository::class);
         $bookRepo = $this->createMock(BookRepository::class);
         $bookRepo->expects($this->once())
             ->method('findBookByCategoryId')
@@ -52,7 +55,7 @@ class BookServiceTest extends TestCase
             ->with(130)
             ->willReturn(true);
 
-        $service = new BookService($bookCategoryRepo, $bookRepo);
+        $service = new BookService($bookCategoryRepo, $bookRepo, $reviewRepo);
         $expected = new BookListResponse([$this->createBookItemsEntity()]);
 
         $this->assertEquals($expected, $service->getBookByCategory(130));
@@ -64,6 +67,8 @@ class BookServiceTest extends TestCase
             ->setTitle('Test Book')
             ->setSlug('This a slug')
             ->setMeap(false)
+            ->setIsbn('123123')
+            ->setDescription('Test description')
             ->setAuthors(['Test'])
             ->setImage('This an image URL')
             ->setCategories(new ArrayCollection())
