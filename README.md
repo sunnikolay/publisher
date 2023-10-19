@@ -78,9 +78,19 @@ symfony var:export --multiline > .env.local
 `symfony serve`
 
 ## 2.2. analyze your code
-`vendor/bin/phpstan analyse src`
+Documentation: https://phpstan.org/user-guide/getting-started
+```
+composer require --dev phpstan/phpstan
+```
+```
+vendor/bin/phpstan analyse src
+```
 
-## 2.3. linter
+## 2.3. linter - setup
+Documentation: https://cs.symfony.com
+```
+composer require --dev friendsofphp/php-cs-fixer
+```
 `./vendor/bin/php-cs-fixer fix`
 
 ---

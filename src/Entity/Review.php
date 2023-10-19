@@ -31,7 +31,7 @@ class Review
     private Book $book;
 
     #[ORM\PrePersist]
-    public function setCreatedAtValue(\DateTimeInterface $createdAt): void
+    public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -90,6 +90,13 @@ class Review
     public function setBook(Book $book): self
     {
         $this->book = $book;
+
+        return $this;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
