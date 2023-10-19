@@ -3,7 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Entity\BookCategory;
-use App\Model\BookCategoryList;
+use App\Model\BookCategory as BookCategoryModel;
 use App\Model\BookCategoryListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Service\BookCategoryService;
@@ -25,7 +25,7 @@ class BookCategoryServiceTest extends TestCase
             ->willReturn([$obj]);
 
         $service = new BookCategoryService($repo);
-        $expected = new BookCategoryListResponse([new BookCategoryList(2, 'Test', 'test')]);
+        $expected = new BookCategoryListResponse([new BookCategoryModel(2, 'Test', 'test')]);
 
         $this->assertEquals($expected, $service->getCategories());
     }

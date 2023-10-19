@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class BookCategoryList
+class BookCategory
 {
     private int $id;
     private string $title;
