@@ -201,3 +201,55 @@ services:
 Установка валидатора:
 
 `composer require symfony/validator`
+
+# 12 Integration with external services
+Зависимость - **hoverfly**
+
+**Hoverfly** — это автоматизированный инструмент моделирования связи API с
+открытым исходным кодом, который помогает в интеграционном тестировании.
+Пользователь может проверить, как API реагируют на определенные события,
+такие как сетевая задержка и ограничение скорости.
+
+Документация:
+https://docs.hoverfly.io/en/latest/pages/keyconcepts/templating/templating.html
+
+Настройка **hoverfly**:
+
+1) Создать папку - hoverfly/responses/recommend
+2) Создать папку - hoverfly/simulations
+3) Добавить image в docker-compose:
+```yaml
+  hoverfly:
+    container_name: hoverfly
+    image: spectolabs/hoverfly:v1.3.4
+    command:
+      - "-webserver"
+      - "-response-body-files-path=/hoverfly_app/responses"
+      - "-import=/hoverfly_app/simulations/recommend.simulations.json"
+    volumes:
+      - "$PWD/hoverfly:/hoverfly_app:ro"
+    ports:
+      - "8500:8500"
+```
+В тестировании можно использовать библиотеку автора:
+```
+composer require --dev ns3777k/hoverfly
+```
+
+Зависимость - **HTTP Client**
+
+```
+composer require symfony/http-client
+```
+
+Настроить DI в файле `config/packages/framework.yaml`:
+```yaml
+framework:
+  http_client:
+    scoped_clients:
+      recommendation.client:
+        base_uri: '%env(RECOMMENDATION_SVC_URL)%'
+        headers:
+          Accept: 'application/json'
+          Authorization: 'Bearer %env(RECOMMENDATION_SVC_TOKEN)%'
+```

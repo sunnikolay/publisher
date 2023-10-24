@@ -3,13 +3,19 @@
 namespace App\Tests\Service;
 
 use App\Entity\Book;
+use App\Entity\BookCategory;
+use App\Entity\BookFormat;
+use App\Entity\BookToBookFormat;
 use App\Exception\BookCategoryNotFoundException;
+use App\Model\BookCategory as BookCategoryModel;
+use App\Model\BookDetails;
+use App\Model\BookFormat as BookFormatModel;
 use App\Model\BookListItem;
 use App\Model\BookListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Repository\BookRepository;
-use App\Repository\ReviewRepository;
 use App\Service\BookService;
+use App\Service\Rating;
 use App\Service\RatingService;
 use App\Tests\TestUtility;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,7 +27,6 @@ class BookServiceTest extends TestCase
 
     private BookCategoryRepository $bookCategoryRepo;
     private BookRepository $bookRepo;
-    private ReviewRepository $reviewRepo;
     private RatingService $service;
 
     protected function setUp(): void
@@ -30,7 +35,6 @@ class BookServiceTest extends TestCase
 
         $this->bookCategoryRepo = $this->createMock(BookCategoryRepository::class);
         $this->bookRepo = $this->createMock(BookRepository::class);
-        $this->reviewRepo = $this->createMock(ReviewRepository::class);
         $this->service = $this->createMock(RatingService::class);
     }
 
@@ -56,33 +60,84 @@ class BookServiceTest extends TestCase
     {
         $this->bookRepo->expects($this->once())
             ->method('findBookByCategoryId')
-            ->with(130)
+            ->with(123)
             ->willReturn([$this->createBookEntity()]);
 
         $this->bookCategoryRepo->expects($this->once())
             ->method('existsById')
-            ->with(130)
+            ->with(123)
             ->willReturn(true);
 
         $service = $this->createService();
         $expected = new BookListResponse([$this->createBookItemsEntity()]);
 
-        $this->assertEquals($expected, $service->getBookByCategory(130));
+        $this->assertEquals($expected, $service->getBookByCategory(123));
+    }
+
+    public function testGetBookById(): void
+    {
+        $this->bookRepo->expects($this->once())
+            ->method('getById')
+            ->with(123)
+            ->willReturn($this->createBookEntity());
+
+        $this->service->expects($this->once())
+            ->method('calcReviewRatingForBook')
+            ->with(123)
+            ->willReturn(new Rating(10, 5.5));
+
+        $format = (new BookFormatModel())
+            ->setId(1)
+            ->setTitle('format')
+            ->setDescription('description format')
+            ->setComment(null)
+            ->setPrice(123.55)
+            ->setDiscountPercent(5);
+
+        $expected = (new BookDetails())
+            ->setId(123)
+            ->setRating(5.5)
+            ->setReviews(10)
+            ->setSlug('This a slug')
+            ->setTitle('Test Book')
+            ->setImage('http://localhost/test.png')
+            ->setAuthors(['tester'])
+            ->setMeap(false)
+            ->setCategories([
+                new BookCategoryModel(1, 'Category', 'category'),
+            ])
+            ->setPublicationDate(1602288000)
+            ->setFormats([$format]);
+
+        $this->assertEquals($expected, $this->createService()->getBookById(123));
     }
 
     private function createBookEntity(): Book
     {
+        $category = (new BookCategory())->setTitle('Category')->setSlug('category');
+        $this->setField($category, 1);
+
+        $format = (new BookFormat())
+            ->setTitle('format')
+            ->setDescription('description format')
+            ->setComment(null);
+        $this->setField($format, 1);
+
+        $join = (new BookToBookFormat())->setPrice(123.55)->setFormat($format)->setDiscountPercent(5);
+        $this->setField($join, 1);
+
         $book = (new Book())
             ->setTitle('Test Book')
             ->setSlug('This a slug')
             ->setMeap(false)
             ->setIsbn('123123')
             ->setDescription('Test description')
-            ->setAuthors(['Test'])
-            ->setImage('This an image URL')
-            ->setCategories(new ArrayCollection())
-            ->setPublicationDate(new \DateTime('2023-09-14'));
-        $this->setField($book, 130);
+            ->setAuthors(['tester'])
+            ->setImage('http://localhost/test.png')
+            ->setCategories(new ArrayCollection([$category]))
+            ->setPublicationDate(new \DateTime('2020-10-10'))
+            ->setFormats(new ArrayCollection([$join]));
+        $this->setField($book, 123);
 
         return $book;
     }
@@ -90,17 +145,17 @@ class BookServiceTest extends TestCase
     private function createBookItemsEntity(): BookListItem
     {
         return (new BookListItem())
-            ->setId(130)
+            ->setId(123)
             ->setTitle('Test Book')
             ->setSlug('This a slug')
             ->setMeap(false)
-            ->setAuthors(['Test'])
-            ->setImage('This an image URL')
-            ->setPublicationDate(1694649600);
+            ->setAuthors(['tester'])
+            ->setImage('http://localhost/test.png')
+            ->setPublicationDate(1602288000);
     }
 
     private function createService(): BookService
     {
-        return new BookService($this->bookCategoryRepo, $this->bookRepo, $this->reviewRepo, $this->service);
+        return new BookService($this->bookCategoryRepo, $this->bookRepo, $this->service);
     }
 }

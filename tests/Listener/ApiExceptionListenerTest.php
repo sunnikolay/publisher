@@ -158,7 +158,7 @@ class ApiExceptionListenerTest extends TestCase
     public function testShowTraceWhenDebug(): void
     {
         $mapping = ExceptionMapping::fromCode(Response::HTTP_NOT_FOUND);
-        $responseMessage = Response::$statusTexts[$mapping->getCode()];
+        $responseMessage = 'error message';
         $responseBody = json_encode(['error' => $responseMessage, 'trace' => 'something']);
 
         $this->resolver->expects($this->once())
@@ -181,7 +181,7 @@ class ApiExceptionListenerTest extends TestCase
             )
             ->willReturn($responseBody);
 
-        $event = $this->createExceptionEvent(new \InvalidArgumentException('error message'));
+        $event = $this->createExceptionEvent(new \InvalidArgumentException($responseMessage));
 
         $this->runListener($this->resolver, $this->logger, $this->serializer, $event, true);
 

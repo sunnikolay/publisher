@@ -6,22 +6,27 @@ use App\Repository\ReviewRepository;
 
 class RatingService
 {
-    public function __construct(private readonly ReviewRepository $reviewRepository)
+    public function __construct(private readonly ReviewRepository $repo)
     {
     }
 
-    public function calcReviewRatingForBook(int $id, int $total): float
+    public function calcReviewRatingForBook(int $id): Rating
     {
+        $total = $this->repo->countByBookId($id);
+
+        $rating = new Rating($total, 0);
         if (0 === $total) {
-            return 0;
+            return $rating;
         }
 
         $sum = 0;
         try {
-            $sum = $this->reviewRepository->getBookTotalRatingSum($id);
+            $sum = $this->repo->getBookTotalRatingSum($id);
         } catch (\Exception $ignore) {
         }
 
-        return $sum / $total;
+        $rating->setRating($sum / $total);
+
+        return $rating;
     }
 }

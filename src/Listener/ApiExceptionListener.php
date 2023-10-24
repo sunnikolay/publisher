@@ -67,7 +67,12 @@ class ApiExceptionListener
 
     private function getResponse(ExceptionMapping $mapping, \Throwable $throwable): Response
     {
-        $message = $mapping->isHidden() ? Response::$statusTexts[$mapping->getCode()] : $throwable->getMessage();
+        if ($mapping->isHidden() && !$this->isDebug) {
+            $message = Response::$statusTexts[$mapping->getCode()];
+        } else {
+            $message = $throwable->getMessage();
+        }
+
         $details = $this->isDebug ? new ErrorDebugDetails($throwable->getTraceAsString()) : null;
         $data = $this->serializer->serialize(new ErrorResponse($message, $details), JsonEncoder::FORMAT);
         $response = new JsonResponse($data, $mapping->getCode(), [], true);
