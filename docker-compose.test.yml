@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   database-test:
-    container_name: postgres-test
+    container_name: publisher-database-test
     image: postgres:13.3-alpine
     command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
     environment:
@@ -10,10 +10,10 @@ services:
       POSTGRES_PASSWORD: 123123
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5433:5432"
+      - "5401:5432"
 
   hoverfly-test:
-    container_name: hoverfly-test
+    container_name: publisher-hoverfly-test
     image: spectolabs/hoverfly:v1.3.4
     command:
       - "-webserver"

@@ -32,7 +32,7 @@ class SubscriberController extends AbstractController
      *     @Model(type=SubscriberRequest::class)
      * )
      */
-    #[Route(path: '/api/v1/subscribe', methods: ['POST'])]
+    #[Route(path: '/api/v1/subscribe', name: 'app_subscriber_action', methods: ['POST'])]
     public function action(#[RequestBody] SubscriberRequest $dto): Response
     {
         $this->service->subscribe($dto);

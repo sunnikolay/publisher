@@ -253,3 +253,115 @@ framework:
           Accept: 'application/json'
           Authorization: 'Bearer %env(RECOMMENDATION_SVC_TOKEN)%'
 ```
+
+# 15 Authentication
+
+## 1. Установка
+Документация: https://github.com/lexik/LexikJWTAuthenticationBundle/blob/2.x/Resources/doc/index.rst#getting-started
+
+Необходимые зависимости:
+```
+composer require lexik/jwt-authentication-bundle
+```
+После установки сработает рецепт который сгенерирует два файла, это security.yaml
+и lexik_jwt_authentication.yaml.
+
+Также при установке lexik установится bundle security. Документация
+https://symfony.com/doc/current/security.html
+
+Если при установку возникает ошибка тогда надо обновить **symfony/flex** командой:
+```
+composer update symfony/flex --no-plugins --no-scripts
+```
+
+## 2. Настройка
+Генерация пары ключей:
+```
+php bin/console lexik:jwt:generate-keypair
+```
+После генерации пары создаются два ключа в директории **config/jwt/**, приватный
+и публичный. Ключи необходимы для подписи токенов.
+
+Указываем где будем хранить пользователей и как их доставать.
+```yaml
+# config/security.yaml
+security:
+  providers:
+    users:
+      entity:
+        class: App\Entity\User
+        property: email
+```
+Провайдер находит entity User по идентификатору email.
+
+Все классы которые имплементируют **PasswordAuthenticatedUserInterface** будет
+использоваться автоалгоритм хеширования паролей.
+```yaml
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+```
+
+Настраиваем firewall'ы. Firewall это правило, которое регламентирует доступ
+чего-либо к чему-либо по шаблону.
+```yaml
+security:
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    login:
+      pattern: ^/api/v1/auth/login
+      stateless: true
+      json_login:
+        check_path: /api/v1/auth/login
+        success_handler:
+        failure_handler:
+    api:
+      pattern: ^/api
+      stateless: true
+      jwt: ~
+```
+
+Access control настраивает доступ для ролей:
+```yaml
+security:
+  access_control:
+    - { path: ^/api/v1/user, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api, roles: PUBLIC_ACCESS }
+```
+
+Также необходимо добавить route:
+```yaml
+# config/routes.yaml
+
+api_login_check:
+  path: /api/v1/auth/login
+```
+
+
+## 3. Добавление custom данных в токен
+doc: https://github.com/lexik/LexikJWTAuthenticationBundle/blob/2.x/Resources/doc/2-data-customization.rst
+
+Создаём listener:
+```php
+class JwtCreatedListener
+{
+    public function __invoke(JWTCreatedEvent $event): void
+    {
+        $user = $event->getUser();
+        $payload = $event->getData();
+        $payload['id'] = $user->getUserIdentifier();
+
+        $event->setData($payload);
+    }
+}
+```
+Добавляем прослушивание события:
+```yaml
+# config/services.yaml
+services:
+  App\Listener\JwtCreatedListener:
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created }
+```
