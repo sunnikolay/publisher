@@ -365,3 +365,46 @@ services:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created }
 ```
+
+## 4. Установка refresh-token
+```
+composer require gesdinet/jwt-refresh-token-bundle
+```
+Настроить route:
+```yaml
+# config/routes.yaml
+
+# ...
+
+api_refresh_token:
+  path: /api/auth/refresh
+```
+
+Настраиваем firewall:
+```yaml
+# config/packages/security.yaml
+
+security:
+  firewalls:
+    api:
+      entry_point: jwt
+      refresh_jwt:
+        check_path: /api/auth/refresh
+```
+entry_point: указывает что делать если пришел не авторизованный пользователь.
+
+Донастраиваем пакет refresh_token:
+```yaml
+# config/packages/gesdinet_jwt_refresh_token.yaml
+
+gesdinet_jwt_refresh_token:
+  refresh_token_class: App\Entity\RefreshToken
+  single_use: true
+```
+**single_use**: эта опция сперва удаляет из БД текущий токен, а потом вставляет
+новый.
+
+**Очистка refresh token**
+```
+php bin/console gesdinet:jwt:clear
+```
